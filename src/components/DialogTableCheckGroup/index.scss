@@ -1,0 +1,45 @@
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.ratio {
+  border-radius: 10px;
+  width: 350px;
+  height: 145px;
+  padding-top: 10px;
+  padding-left: 15px;
+  margin-top: 10px;
+  background-color: #F5F7FA;
+  ;
+}
+
+.radio {
+  .el-checkbox__inner {
+    display: none;
+  }
+}
+
+.radioStyle {
+  .el-checkbox__inner {
+    border-radius: 8px;
+  }
+}
+
+.dialogFrom {
+  height: 24px;
+  line-height: 24px;
+  border-left: 4px solid #1890ff;
+  padding-left: 10px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+.pagination {
+  float: none;
+}

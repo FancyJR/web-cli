@@ -1,0 +1,40 @@
+<section>
+  <el-dialog title="绑定销售" :visible.sync="isVisible" width="60%" @close="cancel" destroy-on-close append-to-body>
+    <div class="head-container">
+      <el-form ref="form" :inline="true" :model="formModel" label-width="80px" prop="id">
+        <el-form-item label="所属部门">
+          <el-select ref="mySelect" v-model="name" placeholder="请选择">
+            <el-option :value="mineStatusValue" style="height: auto; width: 100%;background-color: #fff;">
+              <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="销售人员" prop="name">
+          <el-input v-model="formModel.user_name" placeholder="请输入销售人员" style="width: 160px;" size="small" />
+        </el-form-item>
+
+        <div style="float: right">
+          <el-button type="primary" class="search-btn" @click="onSubmit">查询</el-button>
+          <el-button @click="resetForm('form')">清空</el-button>
+        </div>
+      </el-form>
+    </div>
+    <el-table ref="table" :data="tableData" tooltip-effect="dark"
+      style="width: 100%;max-height: 400px; overflow:scroll;" @select="handleSelect" @select-all="handleSelectAll"
+      :header-row-class-name="radio ? 'radio': ''" :row-class-name="radio ? 'radioStyle': ''">
+      <el-table-column type="selection" width="55"> </el-table-column>
+      <el-table-column label="所属部门">
+        <template slot-scope="scope">{{ scope.row.dept_name }}</template>
+      </el-table-column>
+      <el-table-column prop="user_account" label="销售姓名"> </el-table-column>
+      <el-table-column prop="user_phone" label="销售手机号"> </el-table-column>
+      </el-table-column>
+    </el-table>
+    <pagination class="pagination" size="mini" v-show="total>0" :total="total" :page.sync="listQuery.pageNum"
+      :limit.sync="listQuery.pageSize" @pagination="getList" />
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="cancel">取 消</el-button>
+      <el-button type="primary" @click="handleSure">确 定</el-button>
+    </span>
+  </el-dialog>
+</section>

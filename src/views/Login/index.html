@@ -1,0 +1,148 @@
+<section class="loginContainer">
+  <div uuid="140018bc-a8b0-40ee-93f1-7f392009c1a5" class="login">
+    <div uuid="09838d9c-2c26-4e3a-8cef-e042ee51caec" class="login-nav-box">
+      北京云舒写教育科技有限公司
+    </div>
+    <!--页面主体内容（注意：fixed定位元素不能在这里出现，请写到此标签外部）-->
+    <div
+      uuid="a322c844-5131-4b90-8aa7-4d4e34ad6e39"
+      class="login-box"
+      ref="login"
+    >
+      <div uuid="7bfac184-a712-4b9a-8cc4-869188489e6e" class="login-title">
+        北京云舒写教育科技有限公司
+      </div>
+      <div uuid="b5e6f609-a6c2-4376-af2f-0e245efa152a" class="login-cont">
+        <div
+          uuid="24ecfb28-d76d-4bd5-8e2f-3c1803aabc26"
+          class="swiper-container"
+        >
+          <div
+            uuid="55feea0a-aa91-4e24-849a-9131989fa19d"
+            class="swiper-wrapper"
+          >
+            <div
+              uuid="1b85ccea-2d22-4fcd-9aaa-05e835ef662f"
+              class="swiper-slide"
+            >
+              <img
+                uuid="2dbcfc06-4426-4361-af72-efe0a5173f00"
+                src="../../assets/LoginImg/login_swiper_two.png"
+                alt=""
+              />
+            </div>
+            <div
+              uuid="f1dd7e37-973e-41fe-8486-790f7e8ec2dc"
+              class="swiper-slide"
+            >
+              <img
+                uuid="a80a7418-09fd-4976-ad72-3c35722487a2"
+                src="../../assets/LoginImg/login_swiper_two.png"
+                alt=""
+              />
+            </div>
+          </div>
+          <!-- Add Pagination -->
+          <div
+            uuid="efbc5314-70da-49cc-9058-ea73a20811dd"
+            class="swiper-pagination"
+          ></div>
+        </div>
+        <div uuid="44578f81-7b19-4154-a0f3-fdacaf0ecaa8" class="login-r-box">
+          <div
+            uuid="fbc6e14c-0289-4456-88e0-9bf2e83a4204"
+            class="login-r-title"
+          >
+            登录
+          </div>
+          <div uuid="fb5575b9-a558-4ef0-91a2-87db01592ba2" class="r-box-cont">
+            <div
+              uuid="36083d5e-93d9-4c83-8a5e-60aa52880972"
+              class="account-login"
+            >
+              <el-form
+                v-show="loginType == 1"
+                ref="formLogin"
+                :rules="rulesLogin"
+                :model="formLogin"
+                label-width="80px"
+              >
+                <div class="form-item">
+                  <el-input
+                    size="small"
+                    @focus="handleFoucs"
+                    @blur="handleBlur"
+                    @keyup.enter.native="handleLogin"
+                    v-model="formLogin.account"
+                    placeholder="请输入用户名"
+                  ></el-input>
+                </div>
+                <div class="form-item">
+                  <el-input
+                    size="small"
+                    @focus="handleFoucs"
+                    @blur="handleBlur"
+                    @keyup.enter.native="handleLogin"
+                    type="password"
+                    placeholder="请输入密码"
+                    v-model="formLogin.accountPasswork"
+                    show-password
+                  >
+                  </el-input>
+                </div>
+                <div class="form-item">
+                  <div
+                    uuid="b9144535-3c31-4b53-be90-66be5da22aae"
+                    class="identfy-code"
+                  >
+                    <el-input
+                      size="small"
+                      @focus="handleFoucs"
+                      @blur="handleBlur"
+                      @keyup.enter.native="handleLogin"
+                      v-model="formLogin.logCode"
+                      placeholder="请输入验证码"
+                    ></el-input>
+                    <img
+                      uuid="939d05c2-5de4-46e3-82f3-f242c116d0ba"
+                      @click="handleCode"
+                      class="identfy-code-img"
+                      :src="codePic"
+                      alt=""
+                    />
+                  </div>
+                </div>
+              </el-form>
+              <div
+                uuid="46bb7a4d-82d3-4d6a-b2ef-7dd09dfd1025"
+                v-if="loginType == 1"
+                class="remember-pwd"
+              >
+                <el-checkbox v-model="isRememberPwd" @change="handleRemember"
+                  ><span
+                    uuid="bb34b6e6-8740-4f4d-b811-3c4f13e92ce7"
+                    class="remember-text"
+                    v-model="isRememberPwd"
+                    >记住密码</span
+                  ></el-checkbox
+                >
+              </div>
+              <div
+                uuid="7a196130-bbf3-478c-8098-968e233bbbf6"
+                class="login-btn"
+              >
+                <el-button
+                  size="small"
+                  class="btn"
+                  type="primary"
+                  @click="handleLogin"
+                  >登录</el-button
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

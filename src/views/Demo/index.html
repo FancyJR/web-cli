@@ -1,0 +1,274 @@
+<section>
+  <div class="app-container">
+    <div class="head-container">
+      <el-form ref="form" :model="form" :inline="true" label-width="100px">
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="form.name" placeholder="请输入姓名" style="width: 220px;" class="filter-item" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="form.phone" placeholder="请输入手机号" style="width: 220px;" class="filter-item" />
+        </el-form-item>
+        <el-form-item label="教师资格证" prop="certified">
+          <el-select v-model="form.certified" placeholder="请选择教师资格证" style="width: 220px;">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-button type="primary" class="search-btn" @click="onSubmit(1)">查询</el-button>
+        <el-button @click="resetForm('form')">清空</el-button>
+      </el-form>
+      <div class="expand" v-show="!showMore">
+        <a @click="showSearhMore">展开</a>
+        <i
+          @click="showSearhMore"
+          class="el-icon-caret-bottom"
+        ></i>
+      </div>
+      <el-form :inline="true" :model="form" ref="formOpen" label-width="100px" v-show="showMore">
+        <el-form-item label="最高学历" prop="degreeId">
+          <el-select v-model="form.degreeId" placeholder="请选择最高学历" style="width: 220px;">
+            <el-option :key="" label="全部" value="">
+            </el-option>
+            <el-option v-for="item in universityType.degree" :key="item.dataId" :label="item.dataValue" :value="item.dataId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="毕业院校" prop="university">
+          <el-input v-model="form.university" placeholder="请输入毕业院校" style="width: 220px;" class="filter-item" />
+        </el-form-item>
+        <el-form-item label="账号状态" prop="enable">
+          <el-select v-model="form.enable" placeholder="请选择账号状态" style="width: 220px;">
+            <el-option v-for="item in optionsStatus" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div class="close" v-show="showMore">
+        <a @click="closeSearhMore">收起</a>
+        <i
+          @click="closeSearhMore"
+          class="el-icon-caret-top
+"
+        ></i>
+      </div>
+      <div>
+        <div class="upload-box">
+          <el-button type="primary" @click="upload" class="add">批量上传</el-button>
+          <input class="file-ipt" id="upload-file" ref="upload" @change="handleChange" type="file" name="file" />
+          <div v-if="isProgress" class="progress-box">
+            <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
+          </div>
+        </div>
+        <el-button type="primary" @click="download" class="add">下载模板</el-button>
+        <el-button type="primary" @click="edit('add')" class="add">新增</el-button>
+      </div>
+    </div>
+    <div>
+      <el-table :data="tableData" style="width: 100%" @sort-change="sortChange">
+        <el-table-column prop="initiatorId" sortable="custom" label="序号" width="120" align="center">
+        </el-table-column>
+        <el-table-column prop="name" label="主讲老师姓名" width="120" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.name ? scope.row.name : '-'}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="phone" label="手机号" width="120" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.phone ? scope.row.phone : '-'}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="university" label="毕业院校" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.university ? scope.row.university : '-'}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="certificateNo" label="教师资格证" width="120" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.certificateNo ? scope.row.certificateNo : '-'}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="grades" label="教授年级" width="260" align="center">
+          <template slot-scope="scope">
+            <span>{{scope.row.grades.join('、')}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="attendingCourseName" label="正在教授课程" width="120" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.attendingCourseName ? scope.row.attendingCourseName : '-'}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="enable" label="账号状态" align="center">
+          <template slot-scope="scope">
+            <span v-if="scope.row.enable===0">停用</span>
+            <span v-if="scope.row.enable===1">启用</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="modifierName" label="最近编辑人" width="120" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.modifierName ? scope.row.modifierName : '-'}}
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="160" align="center">
+          <template slot-scope="scope">
+            <el-button @click.native.prevent="edit('view', scope.row)" type="text" size="small">
+              查看
+            </el-button>
+            <el-button @click.native.prevent="edit('update', scope.row)" type="text" size="small">
+              编辑
+            </el-button>
+            <el-button @click.native.prevent="toLesson(scope.row)" type="text" size="small">
+              上课信息
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination class="pagination-container" size="mini" v-show="total>0" :total="total"
+        :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="getList" />
+    </div>
+    <el-dialog title="以下数据未规范填写，请规范填写后重新上传文档" :visible.sync="visible" width="60%" @close="failCancel">
+      <el-table :data="failData" style="width: 100%">
+        <el-table-column prop="teacherName" label="老师姓名" width="100">
+        </el-table-column>
+        <el-table-column prop="phone" label="手机号" width="120">
+        </el-table-column>
+        <el-table-column prop="degree" label="最高学历" width="100">
+        </el-table-column>
+        <el-table-column prop="university" label="毕业院校" width="100">
+        </el-table-column>
+        <el-table-column prop="universityType" label="学校性质" width="100">
+        </el-table-column>
+        <el-table-column prop="specialty" label="所学专业" width="100">
+        </el-table-column>
+        <el-table-column prop="certificateNo" label="教师资格证" width="100">
+        </el-table-column>
+        <el-table-column prop="teachingYears" label="教学经验（年）" width="120">
+        </el-table-column>
+        <el-table-column prop="grades" label="教授年级" width="100">
+        </el-table-column>
+        <el-table-column prop="selfIntro" label="个人介绍" width="100">
+        </el-table-column>
+        <el-table-column prop="errorsMessage" label="不规范字段" fixed="right" width="100">
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="failCancel">取 消</el-button>
+        <el-button type="primary" @click="failCancel">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog :title="editTitle" :visible.sync="editVisible" width="570px" center>
+      <el-form class="form" ref="ruleForm" :rules="rules" :model="formModel" size="small" @submit.native.prevent
+        label-width="140px">
+        <el-form-item label="老师姓名：" style="display: block;" prop="name">
+          <span v-if="isEdit === 'view'">{{formModel.name}}</span>
+          <el-input v-else maxlength="20" v-model="formModel.name" placeholder="请输入老师姓名" style="width: 280px;" class="filter-item" />
+        </el-form-item>
+        <el-form-item label="上传照片：" style="display: block;" prop="photoUrl">
+          <div v-if="isEdit === 'view'">
+            <img class="img" v-if="formModel.photoUrl" :src="formModel.photoUrl"></img>
+          </div>
+          <div v-else class="info">
+            <upload ref="one" @emit-pic="handleUploadShopPic" @emit-delete="handleShopPicDelete"
+              :imgSrc="formModel.photoUrl ? [formModel.photoUrl] : []" :maxLength="1">
+            </upload>
+            <div class="img-info">
+              <div>照片说明：</div>
+              <div>1.请上传老师带正脸职业照片</div>
+              <div>2.图片大小不得超过5M</div>
+            </div>
+          </div>
+        </el-form-item>
+        <el-form-item label="手机号：" style="display: block;" prop="phone">
+          <span v-if="isEdit === 'view'">{{formModel.phone}}</span>
+          <span v-if="isEdit === 'update'">{{formModel.phone}}</span>
+          <el-input v-if="isEdit === 'add'" v-model="formModel.phone" maxlength="11" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" placeholder="请输入手机号" style="width: 280px;" class="filter-item" />
+        </el-form-item>
+        <el-form-item label="最高学历：" style="display: block;" prop="degreeId">
+          <span v-if="isEdit === 'view'">{{formModel.degreeName}}</span>
+          <el-select v-else v-model="formModel.degreeId" placeholder="请选择最高学历" style="width: 280px;" class="filter-item">
+            <el-option v-for="item in universityType.degree" :key="item.dataId" :label="item.dataValue" :value="item.dataId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="毕业院校：" style="display: block;" prop="university">
+          <span v-if="isEdit === 'view'">{{formModel.university}}</span>
+          <el-input v-else v-model="formModel.university" placeholder="请输入毕业院校" maxlength="50" style="width: 280px;"
+            class="filter-item" />
+        </el-form-item>
+        <el-form-item label="学校性质：" style="display: block;" prop="universityTypeId">
+          <span v-if="isEdit === 'view'">{{formModel.universityTypeName}}</span>
+          <el-select v-else v-model="formModel.universityTypeId" placeholder="请选择学校性质" style="width: 280px;" class="filter-item">
+            <el-option v-for="item in universityType.universityType" :key="item.dataId" :label="item.dataValue" :value="item.dataId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所学专业：" style="display: block;" prop="specialty">
+          <span v-if="isEdit === 'view'">{{formModel.specialty}}</span>
+          <el-input v-else v-model="formModel.specialty" placeholder="请输入所学专业" maxlength="30" style="width: 280px;"
+            class="filter-item" />
+        </el-form-item>
+        <el-form-item label="教师资格证：" style="display: block;" prop="certified">
+          <span v-if="isEdit === 'view'">{{formModel.certificateNo}}</span>
+          <div v-else>
+            <el-radio-group v-model="formModel.certified">
+              <el-radio :label="0">无</el-radio>
+              <el-radio :label="1">有</el-radio>
+            </el-radio-group>
+            <el-input v-if="formModel.certified === 1" v-model="formModel.certificateNo" placeholder="请输入教师资格证编号"
+              style="width: 165px;margin-left: 10px;" maxlength="17" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" class="filter-item" />
+          </div>
+        </el-form-item>
+        <el-form-item label="教学经验：" style="display: block;" prop="teachingYears">
+          <span v-if="isEdit === 'view'">{{formModel.teachingYears}}年</span>
+          <el-input v-else v-model="formModel.teachingYears" placeholder="请输入教学经验" min="0" maxlength="4" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" style="width: 280px;"
+            class="filter-item">
+            <template slot="append">年</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="教授年级：" prop="grades">
+          <span v-if="isEdit === 'view'">{{formModel.grades.join('、')}}</span>
+          <el-checkbox-group v-else v-model="formModel.grades">
+            <el-checkbox label="1">一年级</el-checkbox>
+            <el-checkbox label="2">二年级</el-checkbox>
+            <el-checkbox label="3">三年级</el-checkbox>
+            <el-checkbox label="4">四年级</el-checkbox>
+            <el-checkbox label="5">五年级</el-checkbox>
+            <el-checkbox label="6">六年级（预初）</el-checkbox>
+            <el-checkbox label="7">初一</el-checkbox>
+            <el-checkbox label="8">初二</el-checkbox>
+            <el-checkbox label="9">初三</el-checkbox>
+            <el-checkbox label="10">高一</el-checkbox>
+            <el-checkbox label="11">高二</el-checkbox>
+            <el-checkbox label="12">高三</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item v-if="isEdit === 'view'" label="入职日期：" style="display: block;" required>
+          <span>{{formModel.createAt}}</span>
+        </el-form-item>
+        <el-form-item label="个人介绍：" style="display: block;" prop="selfIntro">
+          <span v-if="isEdit === 'view'">{{formModel.selfIntro}}</span>
+          <el-input v-else type="textarea" placeholder="请输入个人介绍" :autosize="{ minRows: 6}"
+            v-model="formModel.selfIntro" maxlength="300" show-word-limit style="width: 280px;">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="账号状态：" style="display: block;" prop="enable">
+          <span v-if="isEdit === 'view'">{{formModel.enable===1 ? '启用':'停用'}}</span>
+          <el-radio-group v-else v-model="formModel.enable">
+            <el-radio :label="1">启用</el-radio>
+            <el-radio :label="0">停用</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="是否为测试数据：" style="display: block;" prop="testAccount">
+          <span v-if="isEdit === 'view'">{{formModel.testAccount === 1 ? '是':'否'}}</span>
+          <el-radio-group v-else v-model="formModel.testAccount">
+            <el-radio :label="1">是</el-radio>
+            <el-radio :label="0">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <span v-if="isEdit !== 'view'" slot="footer" class="dialog-footer">
+        <el-button @click="editCancel">取 消</el-button>
+        <el-button type="primary" @click="onSure">提交</el-button>
+      </span>
+    </el-dialog>
+  </div>
+</section>
